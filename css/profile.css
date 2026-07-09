@@ -1,0 +1,259 @@
+/** 黑马总裁 Label - 个人中心样式 */
+
+/* ========== 个人中心模态框 ========== */
+.profile-modal {
+  max-width: 460px;
+  width: 90%;
+}
+
+.profile-body {
+  padding: 20px 24px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+/* 头像区域 */
+.profile-avatar-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  margin-bottom: 16px;
+}
+
+.profile-avatar-wrap {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+}
+
+.profile-avatar-wrap img {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255,255,255,0.12);
+  background: rgba(0,0,0,0.3);
+}
+
+.profile-avatar-upload {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  padding: 2px 8px;
+  font-size: 11px;
+  background: #1d74ff;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  opacity: 0.9;
+  transition: opacity 0.2s;
+}
+
+.profile-avatar-upload:hover {
+  opacity: 1;
+}
+
+.profile-avatar-info h4 {
+  margin: 0 0 4px;
+  font-size: 17px;
+  font-weight: 600;
+  color: #e8e8e8;
+}
+
+.profile-avatar-info p {
+  margin: 0 0 6px;
+  font-size: 13px;
+  color: #a0a0a0;
+  word-break: break-all;
+}
+
+/* 登录方式标签 */
+.profile-provider-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  font-size: 11px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.08);
+  color: #b0b0b0;
+}
+
+.profile-provider-badge.provider-GitHub {
+  background: rgba(36, 41, 47, 0.6);
+  color: #e6e6e6;
+}
+
+.profile-provider-badge.provider-邮箱 {
+  background: rgba(29, 116, 255, 0.2);
+  color: #6aa8ff;
+}
+
+/* 表单区域 */
+.profile-form .field {
+  margin-bottom: 14px;
+}
+
+.profile-form .field > span {
+  display: block;
+  font-size: 13px;
+  color: #b0b0b0;
+  margin-bottom: 6px;
+}
+
+.profile-nickname-wrap {
+  display: flex;
+  gap: 8px;
+}
+
+.profile-nickname-wrap input {
+  flex: 1;
+}
+
+.profile-nickname-wrap .primary-btn {
+  padding: 6px 14px;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+/* 分区标题 */
+.profile-section {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.profile-section h4 {
+  margin: 0 0 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #d0d0d0;
+}
+
+/* 密码区域 */
+.profile-password-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.profile-password-wrap input {
+  width: 100%;
+}
+
+.profile-password-wrap .primary-btn {
+  margin-top: 4px;
+  align-self: flex-start;
+}
+
+/* 同步状态 */
+.profile-sync-status-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  font-size: 13px;
+}
+
+.profile-sync-label {
+  color: #a0a0a0;
+}
+
+.profile-sync-status-text {
+  color: #d0d0d0;
+  font-weight: 500;
+}
+
+.profile-sync-status-text.synced {
+  color: #4ade80;
+}
+
+.profile-sync-status-text.pending {
+  color: #fbbf24;
+}
+
+.profile-sync-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.profile-sync-actions button {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 13px;
+}
+
+/* ========== 同步状态指示器（顶栏头像旁） ========== */
+.sync-status-indicator {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid #1a1a1a;
+  background: #6b7280;
+  pointer-events: none;
+  transition: background 0.3s;
+}
+
+.sync-status-indicator.offline {
+  background: #6b7280;
+}
+
+.sync-status-indicator.synced {
+  background: #4ade80;
+}
+
+.sync-status-indicator.pending {
+  background: #fbbf24;
+}
+
+.user-avatar-btn {
+  position: relative;
+}
+
+/* 深色主题下的输入框适配 */
+.profile-modal input[type="text"],
+.profile-modal input[type="password"] {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #e0e0e0;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.profile-modal input[type="text"]:focus,
+.profile-modal input[type="password"]:focus {
+  border-color: #1d74ff;
+  background: rgba(255,255,255,0.08);
+}
+
+.profile-modal input::placeholder {
+  color: #666;
+}
+
+/* 响应式 */
+@media (max-width: 480px) {
+  .profile-modal {
+    width: 95%;
+    max-width: 95%;
+  }
+  .profile-body {
+    padding: 16px;
+  }
+  .profile-avatar-section {
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
+  }
+  .profile-sync-actions {
+    flex-direction: column;
+  }
+}
