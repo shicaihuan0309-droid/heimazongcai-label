@@ -110,6 +110,43 @@ const Sync = (() => {
     });
   }
 
+  // ====== 头像上传 ======
+  async function uploadAvatar(file) {
+    if (!supabase || !currentUser) return { success: false, error: '请先登录' };
+    try {
+      const fileExt = file.name.split('.').pop() || 'png';
+      const filePath = `${currentUser.id}/avatar.${fileExt}`;
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, file, { upsert: true, contentType: file.type });
+      if (uploadError) throw uploadError;
+      const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(filePath);
+      // 更新用户元数据
+      await updateUserMetadata({ avatar_url: publicUrl });
+      return { success: true, url: publicUrl };
+    } catch (e) {
+      return { success: false, error: e.message };
+    }
+  }
+
+  // ====== 更新用户元数据 ======
+  async function updateUserMetadata(metadata) {
+    if (!supabase || !currentUser) return { success: false, error: '请先登录' };
+    try {
+      const { data, error } = await supabase.auth.updateUser({
+        data: {
+          ...currentUser.user_metadata,
+          ...metadata
+        }
+      });
+      if (error) throw error;
+      currentUser = data.user;
+      return { success: true, user: data.user };
+    } catch (e) {
+      return { success: false, error: e.message };
+    }
+  }
+
   // ====== 数据同步 ======
   async function uploadData(data) {
     if (!supabase || !currentUser) return { success: false, error: 'Not logged in' };
@@ -168,7 +205,8 @@ const Sync = (() => {
 
   return {
     init, loginWithGitHub, registerWithEmail, loginWithEmail, resetPassword, updatePassword,
-    logout, getCurrentUser, onAuthStateChange, uploadData, downloadData, syncToCloud, syncFromCloud,
+    logout, getCurrentUser, onAuthStateChange, uploadAvatar, updateUserMetadata,
+    uploadData, downloadData, syncToCloud, syncFromCloud,
     isReady, isLoggedIn, getUserDisplayName, getUserAvatar
   };
 })();
