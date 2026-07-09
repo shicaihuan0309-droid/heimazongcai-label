@@ -3444,27 +3444,18 @@ function refreshAllNow() {
   }
 
   function renderDrawerAccount() {
-    const auth = getAuthState();
-    const userName = auth.user?.nickname || auth.user?.name || auth.user?.email || auth.user?.openid || '';
-    const statusText = auth.token ? `已登录：${userName || '当前账号'}` : '未登录';
-    const loginTime = auth.lastLoginAt ? formatBackupTime(auth.lastLoginAt) : '暂无';
-    setDrawerContent('账号同步', '邮箱注册/登录与微信扫码登录，后续接入你的服务器数据库。', `
+    const isLoggedIn = Sync.isLoggedIn && Sync.isLoggedIn();
+    const displayName = isLoggedIn ? Sync.getUserDisplayName() : '';
+    const statusText = isLoggedIn ? `已登录：${displayName}` : '未登录';
+    const loginTime = getAuthState().lastLoginAt ? formatBackupTime(getAuthState().lastLoginAt) : '暂无';
+    setDrawerContent('账号同步', '邮箱注册/登录，数据自动同步到云端。换设备登录即可恢复所有书签和设置。', `
       <div class="auth-stack">
         <section class="auth-status-card">
           <div>
             <strong>${escapeHtml(statusText)}</strong>
             <span>最近登录：${escapeHtml(loginTime)}</span>
           </div>
-          <button id="authLogoutBtn" class="auth-secondary-btn" type="button" ${auth.token ? '' : 'disabled'}>退出登录</button>
-        </section>
-
-        <section class="auth-card">
-          <h4>服务器</h4>
-          <label class="auth-field">
-            <span>API 地址</span>
-            <input id="authApiBase" type="url" placeholder="https://your-domain.com/api" value="${escapeAttr(auth.apiBase || '')}">
-          </label>
-          <p>前端会调用 /auth/register、/auth/login、/auth/wechat/qrcode、/auth/wechat/status。数据库、密码加密、短信/邮箱验证码和微信开放平台配置需要放在服务器端。</p>
+          <button id="authLogoutBtn" class="auth-secondary-btn" type="button" ${isLoggedIn ? '' : 'disabled'}>退出登录</button>
         </section>
 
         <section class="auth-card">
@@ -3477,29 +3468,27 @@ function refreshAllNow() {
           <div class="auth-actions">
             <button id="authLoginBtn" class="drawer-primary-btn" type="button">邮箱登录</button>
             <button id="authRegisterBtn" class="auth-secondary-btn" type="button">注册账号</button>
+            <button id="authResetBtn" class="auth-secondary-btn" type="button">忘记密码</button>
           </div>
         </section>
 
         <section class="auth-card">
-          <h4>微信扫码登录</h4>
-          <div id="authWechatQr" class="auth-wechat-qr">
-            <span>点击下方按钮从服务器获取微信二维码</span>
-          </div>
+          <h4>第三方登录</h4>
           <div class="auth-actions">
-            <button id="authWechatBtn" class="drawer-primary-btn" type="button">获取微信二维码</button>
-            <button id="authWechatCheckBtn" class="auth-secondary-btn" type="button">检查扫码状态</button>
+            <button id="authGitHubBtn" class="drawer-primary-btn" type="button" style="background:#24292e;">GitHub 登录</button>
           </div>
         </section>
       </div>
     `, content => {
-      document.getElementById('authApiBase')?.addEventListener('change', () => {
-        saveAuthState({ apiBase: valueOf('authApiBase').trim() });
-      });
       document.getElementById('authLoginBtn')?.addEventListener('click', () => handleEmailAuth('login'));
       document.getElementById('authRegisterBtn')?.addEventListener('click', () => handleEmailAuth('register'));
+      document.getElementById('authResetBtn')?.addEventListener('click', handleResetPassword);
       document.getElementById('authLogoutBtn')?.addEventListener('click', logoutAuth);
-      document.getElementById('authWechatBtn')?.addEventListener('click', handleWechatLogin);
-      document.getElementById('authWechatCheckBtn')?.addEventListener('click', handleWechatStatus);
+      document.getElementById('authGitHubBtn')?.addEventListener('click', () => {
+        Sync.loginWithGitHub().then(r => {
+          if (!r.success) window._showToast('GitHub 登录失败: ' + r.error, 'error');
+        });
+      });
     });
   }
 
@@ -3507,22 +3496,47 @@ function refreshAllNow() {
     const email = valueOf('authEmail').trim();
     const password = valueOf('authPassword');
     const nickname = valueOf('authNickname').trim();
-    const apiBase = valueOf('authApiBase').trim();
-    await saveAuthState({ apiBase });
     if (!email || !password) return showToast('请填写邮箱和密码', 'error');
     if (password.length < 6) return showToast('密码至少需要 6 位', 'error');
-    const buttons = [document.getElementById('authLoginBtn'), document.getElementById('authRegisterBtn')];
+    const buttons = [document.getElementById('authLoginBtn'), document.getElementById('authRegisterBtn'), document.getElementById('authResetBtn')];
     buttons.forEach(button => { if (button) button.disabled = true; });
     try {
-      const data = await authApiRequest(mode === 'register' ? '/auth/register' : '/auth/login', { email, password, nickname });
-      const payload = extractAuthPayload(data);
-      if (!payload.token) throw new Error('服务器未返回 token');
-      await saveAuthState({ token: payload.token, user: payload.user, lastLoginAt: Date.now() }, true);
-      showToast(mode === 'register' ? '注册并登录成功' : '登录成功', 'success');
+      if (mode === 'register') {
+        const result = await Sync.registerWithEmail(email, password, nickname);
+        if (!result.success) throw new Error(result.error);
+        showToast('注册成功，请查收验证邮件并确认', 'success');
+      } else {
+        const result = await Sync.loginWithEmail(email, password);
+        if (!result.success) throw new Error(result.error);
+        showToast('登录成功', 'success');
+        const syncResult = await Sync.syncFromCloud();
+        if (syncResult.success) {
+          showToast('云端数据已同步到本地，即将刷新...', 'success');
+          setTimeout(() => window.location.reload(), 1500);
+        } else if (!syncResult.isEmpty) {
+          showToast(syncResult.error || '同步数据失败', 'info');
+        }
+      }
     } catch (error) {
       showToast(error.message || '账号请求失败', 'error');
     } finally {
       buttons.forEach(button => { if (button) button.disabled = false; });
+    }
+  }
+
+  async function handleResetPassword() {
+    const email = valueOf('authEmail').trim();
+    if (!email) return showToast('请先填写邮箱地址', 'error');
+    const btn = document.getElementById('authResetBtn');
+    if (btn) btn.disabled = true;
+    try {
+      const result = await Sync.resetPassword(email);
+      if (!result.success) throw new Error(result.error);
+      showToast('密码重置邮件已发送，请查收', 'success');
+    } catch (error) {
+      showToast(error.message || '重置失败', 'error');
+    } finally {
+      if (btn) btn.disabled = false;
     }
   }
 
@@ -3564,6 +3578,7 @@ function refreshAllNow() {
   }
 
   async function logoutAuth() {
+    await Sync.logout();
     await saveAuthState({ token: '', user: null, lastLoginAt: 0 }, true);
     showToast('已退出登录', 'success');
   }
