@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>黑马总裁 Label</title>
+  <link rel="icon" type="image/png" sizes="16x16" href="icons/icon16.png">
+  <link rel="icon" type="image/png" sizes="48x48" href="icons/icon48.png">
+  <link rel="apple-touch-icon" href="icons/icon128.png">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-memo-visible="false">
+  <aside class="panel-dock" aria-label="面板">
+    <button class="dock-avatar" type="button" title="黑马总裁 Label" aria-label="黑马总裁 Label">
+      <img src="icons/horse-logo.png" alt="">
+    </button>
+    <nav id="panelTabsScroll" class="panel-dock-list" aria-label="面板列表"></nav>
+    <button id="addPanelBtn" class="dock-action dock-add-panel" type="button" title="添加面板" aria-label="添加面板">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+    </button>
+    <div class="panel-dock-bottom">
+      <button id="wallpaperQuickBtn" class="dock-action wallpaper-quick-btn" type="button" title="更换壁纸" aria-label="更换壁纸">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19 9 8l4 8 3-5 4 8"></path><path d="M4 19h16"></path><circle cx="17" cy="6" r="2"></circle></svg>
+      </button>
+      <button id="dockMenuBtn" class="dock-action" type="button" title="菜单" aria-label="菜单">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h14"></path></svg>
+      </button>
+    </div>
+  </aside>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand" aria-label="黑马总裁 Label">
+        <img class="brand-logo brand-logo-dark" src="icons/brand-logo-white.png" alt="黑马总裁 Label">
+        <img class="brand-logo brand-logo-light" src="icons/brand-logo-black.png" alt="黑马总裁 Label">
+      </div>
+
+      <form class="search-box" id="searchForm">
+        <button type="button" class="engine-btn" id="engineBtn" title="切换搜索引擎">百度</button>
+        <input id="searchInput" class="search-input" type="text" placeholder="搜索或输入网址" autocomplete="off">
+        <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M16.5 16.5 21 21"></path></svg>
+        <button id="searchBtn" class="search-submit" type="submit" title="搜索">搜索</button>
+      </form>
+      <section id="memoDock" class="memo-dock" aria-label="备忘录" hidden>
+        <button id="memoCompleteBtn" class="memo-check" type="button" title="完成当前备忘录" aria-label="完成当前备忘录"></button>
+        <button id="memoOpenBtn" class="memo-current" type="button">
+          <span class="memo-kicker">备忘录</span>
+          <strong id="memoCurrentTitle">暂无备忘录</strong>
+        </button>
+        <div class="memo-dock-tools" aria-label="备忘录快捷操作">
+          <button id="memoDockAddBtn" class="memo-mini-btn" type="button" title="新增备忘录" aria-label="新增备忘录">+</button>
+          <button id="memoDockOpenFull" class="memo-mini-btn" type="button" title="打开完整编辑器" aria-label="打开完整编辑器">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4H4v4M16 4h4v4M20 16v4h-4M4 16v4h4"></path></svg>
+          </button>
+        </div>
+        <input id="memoDockTitleInput" class="memo-dock-title-input" type="text" placeholder="备忘录标题" autocomplete="off">
+        <textarea id="memoDockContentInput" class="memo-dock-content-input" placeholder="写点需要记住的事情..."></textarea>
+        <div id="memoDockMeta" class="memo-dock-meta">暂无备忘录</div>
+      </section>
+      <div class="top-actions" aria-hidden="true">
+        <div id="userAvatarMenu" class="user-avatar-menu" hidden>
+          <button id="userAvatarBtn" class="user-avatar-btn" type="button" title="个人中心">
+            <img id="userAvatarImg" src="icons/horse-logo.png" alt="">
+          </button>
+          <div id="userAvatarDropdown" class="user-avatar-dropdown" hidden>
+            <div class="user-avatar-info">
+              <span id="userAvatarName">未登录</span>
+              <span id="userAvatarEmail"></span>
+            </div>
+            <div class="user-avatar-divider"></div>
+            <button id="avatarMenuProfile" type="button">个人设置</button>
+            <button id="avatarMenuSync" type="button">同步数据</button>
+            <button id="avatarMenuLogout" type="button">退出登录</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main id="mainContent" class="workspace">
+      <section id="recentDock" class="recent-dock" aria-label="最近使用的网站"></section>
+      <div id="masonryGrid" class="masonry-grid"></div>
+    </main>
+  </div>
+
+  <div id="sidebarOverlay" class="overlay"></div>
+  <aside id="sidebar" class="sidebar">
+    <div class="drawer-head">
+      <div>
+        <h3>临时收集箱</h3>
+        <p>拖入暂未分类的链接，稍后再整理</p>
+      </div>
+      <button id="sidebarClose" class="icon-btn" title="关闭">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+      </button>
+    </div>
+    <div id="sidebarContent" class="sidebar-content"></div>
+    <div class="drawer-footer">
+      <button id="clearCollection" class="danger-btn">清空收集箱</button>
+    </div>
+  </aside>
+
+  <div id="modalOverlay" class="overlay"></div>
+
+  <section id="cardModal" class="modal">
+    <div class="modal-head">
+      <h3 id="modalTitle">添加模块</h3>
+      <button id="modalClose" class="icon-btn" title="关闭"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+    </div>
+    <div class="modal-body">
+      <label class="field" id="cardNameField">
+        <span>模块名称</span>
+        <input id="cardName" type="text" placeholder="例如：设计创作">
+      </label>
+      <label class="field">
+        <span>书签列表，每行一个：名称|链接|备注</span>
+        <textarea id="cardBookmarks" rows="8" placeholder="Figma|https://www.figma.com|figma.com&#10;优设导航|https://hao.uisdc.com|设计导航"></textarea>
+      </label>
+      <div id="bulkBookmarkTools" class="bulk-tools">
+        <div class="bulk-head">
+          <span>批量编辑标签</span>
+          <div>
+            <button id="bulkSelectAll" type="button" class="ghost-btn">全选</button>
+            <button id="bulkDeleteSelected" type="button" class="danger-btn">删除选中</button>
+          </div>
+        </div>
+        <div id="bulkBookmarkList" class="bulk-bookmark-list"></div>
+      </div>
+      <div class="card-style-grid">
+        <label class="field">
+          <span>边框颜色</span>
+          <input id="cardBorderColor" type="color" value="#8fb5d1">
+        </label>
+        <label class="field">
+          <span>边框透明度</span>
+          <input id="cardBorderOpacity" type="range" min="0" max="1" step="0.05" value="0">
+        </label>
+        <label class="field">
+          <span>标签背景透明度</span>
+          <input id="cardBodyOpacity" type="range" min="0" max="1" step="0.05" value="1">
+        </label>
+        <label class="field">
+          <span>字体颜色</span>
+          <input id="cardFontColor" type="color" value="#d8d8d8">
+        </label>
+        <label class="field">
+          <span>字体大小</span>
+          <input id="cardFontSize" type="number" min="12" max="20" step="1" value="15">
+        </label>
+      </div>
+      <input id="cardEditIndex" type="hidden" value="-1">
+    </div>
+    <div class="modal-footer">
+      <button id="modalCancel" class="ghost-btn">取消</button>
+      <button id="modalSave" class="primary-btn">保存</button>
+    </div>
+  </section>
+
+  <section id="addModuleModal" class="modal add-module-modal">
+    <div class="add-module-head">
+      <h3><span class="module-head-icon">+</span>添加模块</h3>
+      <p>创建一个新的链接分组，并放到指定列中。</p>
+    </div>
+    <div class="add-module-body">
+      <label class="field">
+        <span>模块名称</span>
+        <input id="newModuleName" type="text" placeholder="输入模块名称">
+      </label>
+      <div class="field">
+        <span>模块位置</span>
+        <div id="newModuleColumnPicker" class="column-picker"></div>
+      </div>
+      <input id="newModuleColumn" type="hidden" value="0">
+    </div>
+    <div class="add-module-footer">
+      <button id="addModuleSubmit" class="primary-btn">提交</button>
+      <button id="addModuleCancel" class="ghost-btn">取消</button>
+    </div>
+  </section>
+
+  <section id="addLinkModal" class="modal add-link-modal">
+    <div class="add-module-head">
+      <h3 id="addLinkTitle">添加链接</h3>
+    </div>
+    <div class="add-module-body">
+      <label class="field">
+        <span>地址</span>
+        <input id="addLinkUrl" type="text" placeholder="输入 URL">
+      </label>
+      <label class="field">
+        <span>标题</span>
+        <input id="addLinkName" type="text" placeholder="请输入链接标题">
+      </label>
+      <label class="field">
+        <span>备注</span>
+        <textarea id="addLinkRemark" rows="3" maxlength="100" placeholder="输入备注"></textarea>
+        <small class="field-hint">100字以内</small>
+      </label>
+      <input id="addLinkCardId" type="hidden">
+      <input id="addLinkIcon" type="hidden">
+    </div>
+    <div class="add-module-footer">
+      <button id="addLinkSubmit" class="primary-btn">提交</button>
+      <button id="addLinkCancel" class="ghost-btn">取消</button>
+    </div>
+  </section>
+
+  <section id="editBookmarkModal" class="modal small-modal">
+    <div class="modal-head">
+      <h3 id="editBmTitle">编辑链接</h3>
+      <button id="editBmClose" class="icon-btn" title="关闭"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+    </div>
+    <div class="modal-body">
+      <label class="field"><span>标题</span><input id="editBmName" type="text"></label>
+      <label class="field"><span>链接</span><input id="editBmUrl" type="text" placeholder="https://..."></label>
+      <label class="field"><span>备注</span><textarea id="editBmRemark" rows="3" maxlength="100" placeholder="输入备注"></textarea></label>
+      <div class="field">
+        <span>图标</span>
+        <div class="bookmark-icon-editor">
+          <span id="editBmIconPreview" class="bookmark-icon-preview"></span>
+          <div class="bookmark-icon-actions">
+            <label class="ghost-btn icon-upload-btn">
+              上传本地图标
+              <input id="editBmIconFile" type="file" accept="image/*" hidden>
+            </label>
+            <button id="editBmIconReset" type="button" class="ghost-btn">恢复自动图标</button>
+          </div>
+        </div>
+      </div>
+      <input id="editBmCardId" type="hidden">
+      <input id="editBmIndex" type="hidden" value="-1">
+      <input id="editBmIcon" type="hidden">
+    </div>
+    <div class="modal-footer">
+      <button id="editBmCancel" class="ghost-btn">取消</button>
+      <button id="editBmSave" class="primary-btn">保存</button>
+    </div>
+  </section>
+
+  <section id="settingsModal" class="modal settings-modal">
+    <div class="modal-head">
+      <h3>偏好设置</h3>
+      <button id="settingsModalClose" class="icon-btn" title="关闭"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+    </div>
+    <div class="modal-body settings-grid">
+      <label class="setting-row"><span>搜索结果新窗口打开</span><input id="settingSearchNewWindow" type="checkbox"></label>
+      <label class="setting-row"><span>链接新窗口打开</span><input id="settingLinkNewWindow" type="checkbox"></label>
+      <label class="setting-row"><span>链接标题单行显示</span><input id="settingSingleLine" type="checkbox"></label>
+      <label class="setting-row"><span>链接备注</span><select id="settingLinkNote"><option value="hover">悬停显示</option><option value="always">始终显示</option><option value="none">不显示</option></select></label>
+      <label class="setting-row"><span>双击模块标题</span><select id="settingDblClick"><option value="none">无操作</option><option value="edit">编辑模块</option><option value="collapse">折叠模块</option><option value="addlink">添加链接</option></select></label>
+      <label class="setting-row"><span>添加链接位置</span><select id="settingAddPos"><option value="bottom">底部</option><option value="top">顶部</option></select></label>
+      <label class="setting-row"><span>加载后聚焦搜索框</span><input id="settingAutoFocus" type="checkbox"></label>
+    </div>
+    <div class="modal-footer">
+      <button id="settingsCancel" class="ghost-btn">取消</button>
+      <button id="settingsSave" class="primary-btn">保存设置</button>
+    </div>
+  </section>
+
+  <section id="panelManagerModal" class="modal panel-manager-modal">
+    <div class="modal-head">
+      <h3>面板管理</h3>
+      <button id="panelManagerClose" class="icon-btn" title="关闭"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+    </div>
+    <div class="modal-body">
+      <div id="panelManagerList" class="panel-manager-list"></div>
+      <button id="panelManagerAdd" class="primary-btn panel-add-btn">添加面板</button>
+    </div>
+  </section>
+
+  <section id="memoModal" class="modal memo-modal">
+    <aside class="memo-sidebar">
+      <div class="memo-sidebar-head">
+        <h3>备忘录</h3>
+        <button id="memoAddBtn" class="memo-add-btn" type="button" title="新增备忘录"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+      </div>
+      <input id="memoSearchInput" class="memo-search" type="text" placeholder="search" autocomplete="off">
+      <div id="memoList" class="memo-list"></div>
+    </aside>
+    <section class="memo-editor">
+      <div class="memo-editor-head">
+        <input id="memoTitleInput" class="memo-title-input" type="text" placeholder="备忘录标题">
+        <div class="memo-editor-actions">
+          <button id="memoToggleDone" class="memo-icon-btn" type="button" title="完成/恢复">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"></path></svg>
+          </button>
+          <button id="memoDeleteBtn" class="memo-icon-btn danger" type="button" title="删除">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 14h10l1-14M9 7V4h6v3"></path></svg>
+          </button>
+          <button id="memoClose" class="memo-icon-btn" type="button" title="关闭">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+          </button>
+        </div>
+      </div>
+      <textarea id="memoContentInput" class="memo-content-input" placeholder="写点需要记住的事情..."></textarea>
+      <div id="memoMeta" class="memo-meta"></div>
+    </section>
+  </section>
+
+  <section id="menuModal" class="top-menu-popover">
+    <button id="menuDrawerClose" class="top-menu-close" type="button" title="关闭" aria-label="关闭">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+    </button>
+    <div class="top-menu-user">
+      <span class="top-menu-avatar"><img src="icons/horse-logo.png" alt=""></span>
+      <span>黑马总裁 Label</span>
+      <div class="top-menu-mode-switch" aria-label="收纳模式">
+        <button id="modeCardsBtn" type="button">卡片</button>
+        <button id="modeDesktopBtn" type="button">桌面图标</button>
+      </div>
+    </div>
+    <div class="top-menu-shell">
+      <div class="top-menu-list">
+      <button id="menuSettings"><span class="top-menu-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"></circle><path d="M6 21v-2a6 6 0 0 1 12 0v2"></path></svg></span>偏好设置</button>
+      <button id="menuPanels"><span class="top-menu-icon"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"></rect><rect x="14" y="4" width="6" height="6" rx="1"></rect><rect x="4" y="14" width="6" height="6" rx="1"></rect><rect x="14" y="14" width="6" height="6" rx="1"></rect></svg></span>面板管理</button>
+      <button id="menuSearchEngines"><span class="top-menu-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"></circle><path d="M16 16l4 4"></path></svg></span>搜索引擎</button>
+      <button id="menuThemeWallpaper"><span class="top-menu-icon"><svg viewBox="0 0 24 24"><path d="M4 19 9 8l4 8 3-5 4 8"></path><path d="M4 19h16"></path><circle cx="17" cy="6" r="2"></circle></svg></span>主题/壁纸</button>
+      <button id="menuDesktopIcons"><span class="top-menu-icon"><svg viewBox="0 0 24 24"><rect x="5" y="5" width="6" height="6" rx="2"></rect><rect x="13" y="5" width="6" height="6" rx="2"></rect><rect x="5" y="13" width="6" height="6" rx="2"></rect><rect x="13" y="13" width="6" height="6" rx="2"></rect></svg></span>图标</button>
+      <button id="menuSidebarSettings"><span class="top-menu-icon"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="2"></rect><path d="M9 5v14"></path></svg></span>侧边栏</button>
+      <button id="menuBackupRestore"><span class="top-menu-icon"><svg viewBox="0 0 24 24"><path d="M6 18a4 4 0 0 1-.4-8A6 6 0 0 1 17 8.3 4.7 4.7 0 0 1 18 18H6Z"></path><path d="M12 12v6"></path><path d="M9.5 15.5 12 18l2.5-2.5"></path></svg></span>备份与恢复</button>
+      </div>
+      <div class="top-menu-content">
+        <div class="top-menu-card">
+          <h4>快捷操作</h4>
+          <p>偏好、面板、导入导出等功能都集中在这里。</p>
+        </div>
+        <div class="top-menu-card">
+          <h4>数据管理</h4>
+          <p>支持导入浏览器收藏夹，也可以导出当前配置做备份。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <input id="importFileInput" type="file" accept=".json" hidden>
+  <input id="wallpaperFileInput" type="file" accept="image/*" hidden>
+
+  <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="js/sync.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/search.js"></script>
+  <script src="js/panel.js"></script>
+  <script src="js/drag.js"></script>
+  <script src="js/sidebar.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
