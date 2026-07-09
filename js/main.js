@@ -171,6 +171,9 @@
     });
     refreshAll();
 
+    // 初始化云端同步
+    if (typeof initSync === 'function') initSync();
+
     if (getSettings().autoFocus) {
       setTimeout(() => document.getElementById('searchInput')?.focus(), 100);
     }
@@ -4379,5 +4382,6 @@ function addSyncMenuListener() {
   });
 }
 
-const _origInit = init;
-init = function() { _origInit(); initSync(); };
+// initSync 在 IIFE 内部通过 hook 调用，这里不做覆盖
+// initSync() 会在 DOMContentLoaded 事件触发后通过 _origInit 调用
+
