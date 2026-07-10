@@ -1,6 +1,6 @@
+
 /** 黑马总裁 Label - 个人中心样式 */
 
-/* ========== 个人中心模态框 ========== */
 .profile-modal {
   max-width: 460px;
   width: 90%;
@@ -12,7 +12,6 @@
   overflow-y: auto;
 }
 
-/* 头像区域 */
 .profile-avatar-section {
   display: flex;
   align-items: center;
@@ -71,7 +70,6 @@
   word-break: break-all;
 }
 
-/* 登录方式标签 */
 .profile-provider-badge {
   display: inline-block;
   padding: 2px 10px;
@@ -91,7 +89,6 @@
   color: #6aa8ff;
 }
 
-/* 表单区域 */
 .profile-form .field {
   margin-bottom: 14px;
 }
@@ -118,7 +115,6 @@
   white-space: nowrap;
 }
 
-/* 分区标题 */
 .profile-section {
   margin-top: 16px;
   padding-top: 16px;
@@ -132,23 +128,6 @@
   color: #d0d0d0;
 }
 
-/* 密码区域 */
-.profile-password-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.profile-password-wrap input {
-  width: 100%;
-}
-
-.profile-password-wrap .primary-btn {
-  margin-top: 4px;
-  align-self: flex-start;
-}
-
-/* 同步状态 */
 .profile-sync-status-row {
   display: flex;
   justify-content: space-between;
@@ -166,14 +145,6 @@
   font-weight: 500;
 }
 
-.profile-sync-status-text.synced {
-  color: #4ade80;
-}
-
-.profile-sync-status-text.pending {
-  color: #fbbf24;
-}
-
 .profile-sync-actions {
   display: flex;
   gap: 8px;
@@ -186,7 +157,6 @@
   font-size: 13px;
 }
 
-/* ========== 同步状态指示器（顶栏头像旁） ========== */
 .sync-status-indicator {
   position: absolute;
   bottom: 2px;
@@ -216,7 +186,68 @@
   position: relative;
 }
 
-/* 深色主题下的输入框适配 */
+.user-avatar-menu {
+  position: relative;
+}
+
+.user-avatar-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 180px;
+  background: #1f1f1f;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 10px 0;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  z-index: 2000;
+}
+
+.user-avatar-info {
+  padding: 0 14px 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.user-avatar-info span {
+  display: block;
+  font-size: 13px;
+}
+
+.user-avatar-info span:first-child {
+  font-weight: 600;
+  color: #e0e0e0;
+}
+
+.user-avatar-info span:last-child {
+  color: #888;
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.user-avatar-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.06);
+  margin: 6px 0;
+}
+
+.user-avatar-dropdown button {
+  display: block;
+  width: 100%;
+  padding: 8px 14px;
+  background: none;
+  border: none;
+  color: #c0c0c0;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.user-avatar-dropdown button:hover {
+  background: rgba(255,255,255,0.06);
+  color: #fff;
+}
+
 .profile-modal input[type="text"],
 .profile-modal input[type="password"] {
   background: rgba(255,255,255,0.06);
@@ -239,7 +270,6 @@
   color: #666;
 }
 
-/* 响应式 */
 @media (max-width: 480px) {
   .profile-modal {
     width: 95%;
